@@ -45,6 +45,7 @@ export function VolunteerLogin() {
           donorId: res.donorId,
           volunteerId: res.volunteerId,
           role: res.role || 'VOLUNTEER',
+          adminState: res.state ?? null,
         };
         localStorage.setItem("donor_session", JSON.stringify(session));
         toast.success("Welcome back!");

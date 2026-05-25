@@ -20,6 +20,8 @@ import { CoinModule } from './coin/coin.module';
 import { ReferralModule } from './referral/referral.module';
 import { LeaderboardModule } from './leaderboard/leaderboard.module';
 import { CampModule } from './camp/camp.module';
+import { CampRequestModule } from './camp-request/camp-request.module';
+import { OrganizerModule } from './organizer/organizer.module';
 import { RedisModule } from './redis/redis.module';
 import { StorageModule } from './storage/storage.module';
 import { WhatsappModule } from './whatsapp/whatsapp.module';
@@ -46,6 +48,8 @@ import { WhatsappModule } from './whatsapp/whatsapp.module';
     ReferralModule,
     LeaderboardModule,
     CampModule,
+    CampRequestModule,
+    OrganizerModule,
     RedisModule,
     StorageModule,
   ],

@@ -1,10 +1,9 @@
 import { useEffect, useState } from "react";
-import { 
-  Users, 
-  Search, 
-  Filter, 
-  Download, 
-  ArrowRight, 
+import {
+  Search,
+  Filter,
+  Download,
+  ArrowRight,
   Activity,
   Coins,
   Heart,
@@ -12,8 +11,10 @@ import {
 } from "lucide-react";
 import { motion } from "motion/react";
 import { client } from "../../lib/api/client";
+import { useStateParam } from "../../context/AdminStateContext";
 
 export function AdminDonors() {
+  const stateParam = useStateParam();
   const [donors, setDonors] = useState<any[]>([]);
   const [mappingStats, setMappingStats] = useState({ oneTime: 0, recurring: 0 });
   const [isLoading, setIsLoading] = useState(true);
@@ -33,9 +34,10 @@ export function AdminDonors() {
 
   useEffect(() => {
     setIsLoading(true);
+    const stateQuery = stateParam ? stateParam : "";
     Promise.all([
-      client.get<any[]>('/admin/donors'),
-      client.get<any>('/admin/stats?range=30D')
+      client.get<any[]>(`/admin/donors${stateQuery}`),
+      client.get<any>(`/admin/stats?range=30D${stateParam ? `&${stateParam.slice(1)}` : ""}`)
     ]).then(([donorsData, statsData]) => {
       setDonors(donorsData || []);
       if (statsData?.mappingStats) {
@@ -44,7 +46,7 @@ export function AdminDonors() {
     })
     .catch(err => console.error("Error loading donors:", err))
     .finally(() => setIsLoading(false));
-  }, []);
+  }, [stateParam]);
 
   const filteredDonors = donors.filter(d => 
     d.name.toLowerCase().includes(searchQuery.toLowerCase()) ||

@@ -39,8 +39,10 @@ const activityStyles: any = {
 
 import { Link } from "react-router";
 import { client } from "../../lib/api/client";
+import { useStateParam } from "../../context/AdminStateContext";
 
 export function AdminDashboard() {
+  const stateParam = useStateParam();
   const [stats, setStats] = useState({
     totalDonations: 0,
     totalDonors: 0,
@@ -53,7 +55,8 @@ export function AdminDashboard() {
 
   useEffect(() => {
     setIsLoading(true);
-    client.get<any>(`/admin/stats?range=${range}`)
+    const stateQuery = stateParam ? `&${stateParam.slice(1)}` : "";
+    client.get<any>(`/admin/stats?range=${range}${stateQuery}`)
       .then(data => {
         if (data) {
           setStats({
@@ -67,7 +70,7 @@ export function AdminDashboard() {
       })
       .catch(err => console.error("Error fetching admin stats:", err))
       .finally(() => setIsLoading(false));
-  }, [range]);
+  }, [range, stateParam]);
 
   const containerVariants = {
     hidden: { opacity: 0 },

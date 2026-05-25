@@ -40,7 +40,10 @@ let AuthController = class AuthController {
         if (!email || !password) {
             return { error: 'Email and password are required.' };
         }
-        if (process.env.ADMIN_EMAIL && process.env.ADMIN_PASSWORD && email === process.env.ADMIN_EMAIL && password === process.env.ADMIN_PASSWORD) {
+        const normalizedEmail = email.toLowerCase().trim();
+        const adminEnvEmail = process.env.ADMIN_EMAIL?.toLowerCase();
+        const adminEnvPassword = process.env.ADMIN_PASSWORD;
+        if (adminEnvEmail && adminEnvPassword && normalizedEmail === adminEnvEmail && password === adminEnvPassword) {
             const result = await this.authService.adminLogin(email, password);
             if (result.token) {
                 res.cookie('auth_token', result.token, {
@@ -50,11 +53,31 @@ let AuthController = class AuthController {
                     maxAge: 24 * 60 * 60 * 1000,
                 });
             }
-            return {
-                ...result,
-                role: 'ADMIN',
-                redirect: '/admin'
-            };
+            return { ...result, redirect: '/admin' };
+        }
+        const dbAdminResult = await this.authService.tryAdminLogin(email, password);
+        if (dbAdminResult) {
+            if (dbAdminResult.token) {
+                res.cookie('auth_token', dbAdminResult.token, {
+                    httpOnly: true,
+                    secure: process.env.NODE_ENV === 'production',
+                    sameSite: 'lax',
+                    maxAge: 24 * 60 * 60 * 1000,
+                });
+            }
+            return dbAdminResult;
+        }
+        const orgResult = await this.authService.tryCampOrganizerLogin(email, password);
+        if (orgResult) {
+            if (orgResult.token) {
+                res.cookie('auth_token', orgResult.token, {
+                    httpOnly: true,
+                    secure: process.env.NODE_ENV === 'production',
+                    sameSite: 'lax',
+                    maxAge: 24 * 60 * 60 * 1000,
+                });
+            }
+            return orgResult;
         }
         const result = await this.authService.donorLogin(email, { password });
         if (result.token) {

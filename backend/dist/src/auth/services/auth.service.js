@@ -164,9 +164,105 @@ let AuthService = class AuthService {
     async verifyOtpHash(otp, hash) {
         return bcrypt.compare(otp, hash);
     }
+    async tryAdminLogin(email, password) {
+        const normalizedEmail = this.sanitizeInput(email.toLowerCase());
+        const dbAdmin = await this.prisma.admin.findUnique({ where: { email: normalizedEmail } });
+        if (!dbAdmin)
+            return null;
+        if (!dbAdmin.isActive)
+            return { error: 'This admin account has been deactivated.', statusCode: 401 };
+        const passwordValid = await bcrypt.compare(password, dbAdmin.password);
+        if (!passwordValid)
+            return { error: 'Invalid admin credentials.', statusCode: 401 };
+        console.log(`[AuthService] State admin login successful for ${normalizedEmail} (state: ${dbAdmin.state})`);
+        const payload = {
+            sub: dbAdmin.id,
+            email: dbAdmin.email,
+            role: dbAdmin.role,
+            state: dbAdmin.state,
+            name: dbAdmin.name,
+        };
+        const token = this.jwtService.sign(payload);
+        return {
+            success: true,
+            token,
+            name: dbAdmin.name,
+            role: dbAdmin.role,
+            state: dbAdmin.state,
+            redirect: '/admin/dashboard',
+            otpSent: false,
+        };
+    }
+    async tryCampOrganizerLogin(email, password) {
+        const normalizedEmail = this.sanitizeInput(email.toLowerCase());
+        const organizer = await this.prisma.campOrganizer.findUnique({ where: { email: normalizedEmail } });
+        if (!organizer)
+            return null;
+        if (!organizer.isActive)
+            return { error: 'This account has been deactivated.', statusCode: 401 };
+        if (organizer.accessExpiresAt && new Date() > new Date(organizer.accessExpiresAt)) {
+            return { error: 'Camp organizer access has expired.', statusCode: 401 };
+        }
+        const passwordValid = await bcrypt.compare(password, organizer.password);
+        if (!passwordValid)
+            return null;
+        await this.prisma.campOrganizer.update({
+            where: { id: organizer.id },
+            data: { lastLoginAt: new Date() },
+        });
+        console.log(`[AuthService] Camp organizer login successful for ${normalizedEmail}`);
+        const payload = {
+            sub: organizer.id,
+            email: organizer.email,
+            role: 'CAMP_ORGANIZER',
+            campId: organizer.campId,
+            hasChangedPassword: organizer.hasChangedPassword,
+        };
+        const token = this.jwtService.sign(payload);
+        return {
+            success: true,
+            token,
+            name: organizer.name,
+            role: 'CAMP_ORGANIZER',
+            campId: organizer.campId,
+            hasChangedPassword: organizer.hasChangedPassword,
+            redirect: organizer.hasChangedPassword
+                ? `/organizer/camp/${organizer.campId}`
+                : '/organizer/set-password',
+            otpSent: false,
+        };
+    }
     async adminLogin(email, password) {
         email = this.sanitizeInput(email.toLowerCase());
         this.checkLoginRateLimit(`admin:${email}`);
+        const dbAdmin = await this.prisma.admin.findUnique({ where: { email } });
+        if (dbAdmin) {
+            if (!dbAdmin.isActive) {
+                throw new common_1.UnauthorizedException('This admin account has been deactivated.');
+            }
+            const passwordValid = await bcrypt.compare(password, dbAdmin.password);
+            if (!passwordValid) {
+                throw new common_1.UnauthorizedException('Invalid admin credentials.');
+            }
+            console.log(`[AuthService] State admin login successful for ${email} (state: ${dbAdmin.state})`);
+            const payload = {
+                sub: dbAdmin.id,
+                email: dbAdmin.email,
+                role: dbAdmin.role,
+                state: dbAdmin.state,
+                name: dbAdmin.name,
+            };
+            const token = this.jwtService.sign(payload);
+            return {
+                success: true,
+                token,
+                name: dbAdmin.name,
+                role: dbAdmin.role,
+                state: dbAdmin.state,
+                redirect: '/admin/dashboard',
+                otpSent: false,
+            };
+        }
         const adminEmail = this.configService.get('ADMIN_EMAIL')?.toLowerCase();
         const adminPassword = this.configService.get('ADMIN_PASSWORD');
         if (!adminEmail || !adminPassword) {
@@ -178,15 +274,57 @@ let AuthService = class AuthService {
         if (password !== adminPassword) {
             throw new common_1.UnauthorizedException('Invalid admin credentials.');
         }
-        console.log(`[AuthService] Admin login successful for ${email}`);
-        const payload = { sub: 'super-admin', email, role: 'ADMIN' };
+        console.log(`[AuthService] Super admin login successful for ${email}`);
+        const payload = { sub: 'super-admin', email, role: 'SUPER_ADMIN', state: null, name: 'Super Admin' };
         const token = this.jwtService.sign(payload);
         return {
             success: true,
             token,
             name: 'Super Admin',
-            role: 'ADMIN',
+            role: 'SUPER_ADMIN',
+            state: null,
             redirect: '/admin/dashboard',
+            otpSent: false,
+        };
+    }
+    async campOrganizerLogin(email, password) {
+        email = this.sanitizeInput(email.toLowerCase());
+        this.checkLoginRateLimit(`organizer:${email}`);
+        const organizer = await this.prisma.campOrganizer.findUnique({ where: { email } });
+        if (!organizer) {
+            throw new common_1.UnauthorizedException('Invalid credentials.');
+        }
+        if (!organizer.isActive) {
+            throw new common_1.UnauthorizedException('This account has been deactivated.');
+        }
+        if (organizer.accessExpiresAt && new Date() > new Date(organizer.accessExpiresAt)) {
+            throw new common_1.UnauthorizedException('Camp organizer access has expired.');
+        }
+        const passwordValid = await bcrypt.compare(password, organizer.password);
+        if (!passwordValid) {
+            throw new common_1.UnauthorizedException('Invalid credentials.');
+        }
+        await this.prisma.campOrganizer.update({
+            where: { id: organizer.id },
+            data: { lastLoginAt: new Date() },
+        });
+        console.log(`[AuthService] Camp organizer login successful for ${email}`);
+        const payload = {
+            sub: organizer.id,
+            email: organizer.email,
+            role: 'CAMP_ORGANIZER',
+            campId: organizer.campId,
+            hasChangedPassword: organizer.hasChangedPassword,
+        };
+        const token = this.jwtService.sign(payload);
+        return {
+            success: true,
+            token,
+            name: organizer.name,
+            role: 'CAMP_ORGANIZER',
+            campId: organizer.campId,
+            hasChangedPassword: organizer.hasChangedPassword,
+            redirect: organizer.hasChangedPassword ? `/organizer/camp/${organizer.campId}` : '/organizer/set-password',
             otpSent: false,
         };
     }

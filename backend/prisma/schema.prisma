@@ -58,6 +58,7 @@ model Volunteer {
   name                String
   mobile              String
   city                String?
+  state               String?
   profession          String?
   skills              String[]
   availability        String?
@@ -157,6 +158,8 @@ model WithdrawalRequest {
   status              String    @default("PENDING") // PENDING, APPROVED, REJECTED, PAID
   bankDetailsSnapshot String?   // Bank details at the time of request
   adminNotes          String?
+  transactionRef      String?   // UTR or reference number when marked as PAID
+  reviewedBy          String?   // Admin id who last actioned this request
   createdAt           DateTime  @default(now())
   updatedAt           DateTime  @updatedAt
 }
@@ -196,9 +199,12 @@ model Camp {
   normalQrRotatedAt DateTime?
   activeQrRotatedAt DateTime?
 
-  totalCoinPool  Int                 @default(0) // Total coins to distribute among JOINING volunteers
-  purpose        String              @default("HEALTH") // HEALTH, EDUCATION, ENVIRONMENT, COMMUNITY, YOUTH
-  status         String              @default("UPCOMING") // UPCOMING, ACTIVE, COMPLETED
+  totalCoinPool   Int                 @default(0) // Total coins to distribute among JOINING volunteers
+  purpose         String              @default("HEALTH") // HEALTH, EDUCATION, ENVIRONMENT, COMMUNITY, YOUTH
+  status          String              @default("UPCOMING") // UPCOMING, ACTIVE, COMPLETED
+  state           String?
+  organizerType   String              @default("ADMIN") // "ADMIN" | "ORGANIZER"
+  campOrganizerId String?
   participations CampParticipation[]
   createdAt      DateTime            @default(now())
   updatedAt      DateTime            @updatedAt
@@ -360,4 +366,68 @@ model AdvisoryDraft {
   currentStep Int    @default(4) // Usually saved at step 4
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+// ─────────────────────────────────────────────────────
+// ADMIN — Super admin (env-based) and State Admins (DB-based)
+// ─────────────────────────────────────────────────────
+model Admin {
+  id          String   @id @default(cuid())
+  email       String   @unique
+  password    String
+  name        String
+  phone       String?
+  role        String   @default("STATE_ADMIN") // "STATE_ADMIN" only (SUPER_ADMIN is env-based)
+  state       String?  // e.g., "Odisha", "Maharashtra" — null means no state restriction
+  isActive    Boolean  @default(true)
+  createdById String?  // Super admin who created this account
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// ─────────────────────────────────────────────────────
+// CAMP REQUEST — Public camp hosting requests
+// ─────────────────────────────────────────────────────
+model CampRequest {
+  id                   String         @id @default(cuid())
+  requesterName        String
+  requesterEmail       String
+  requesterPhone       String
+  organizationName     String?
+  state                String
+  district             String
+  address              String
+  campType             String         // e.g., "HEALTH", "EDUCATION"
+  expectedDate         DateTime
+  durationDays         Int            @default(1)
+  expectedParticipants Int
+  description          String?
+  status               String         @default("PENDING") // PENDING, APPROVED, REJECTED
+  reviewedBy           String?        // Admin id who reviewed
+  adminNotes           String?
+  organizerId          String?        @unique // Set after approval
+  organizer            CampOrganizer? @relation(fields: [organizerId], references: [id])
+  createdAt            DateTime       @default(now())
+  updatedAt            DateTime       @updatedAt
+}
+
+// ─────────────────────────────────────────────────────
+// CAMP ORGANIZER — Temporary dashboard account for approved camp hosts
+// ─────────────────────────────────────────────────────
+model CampOrganizer {
+  id                 String       @id @default(cuid())
+  email              String       @unique
+  password           String       // Bcrypt hashed; set on first login
+  name               String
+  phone              String
+  state              String
+  campId             String?      // Linked camp once created by admin
+  campRequestId      String?      @unique
+  campRequest        CampRequest?
+  accessExpiresAt    DateTime
+  isActive           Boolean      @default(true)
+  hasChangedPassword Boolean      @default(false)
+  lastLoginAt        DateTime?
+  createdAt          DateTime     @default(now())
+  updatedAt          DateTime     @updatedAt
 }

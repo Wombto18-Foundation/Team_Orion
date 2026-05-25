@@ -258,7 +258,13 @@ export function VolunteerCamps() {
                                  </span>
                                  Camp Title
                                </p>
-                               <h3 className="text-xl md:text-3xl font-extrabold text-slate-900 leading-none mb-1 tracking-tight" style={{ fontFamily: "'Poppins', sans-serif" }}>{camp.name}</h3>
+                               <h3 className="text-xl md:text-3xl font-extrabold text-slate-900 leading-none mb-2 tracking-tight" style={{ fontFamily: "'Poppins', sans-serif" }}>{camp.name}</h3>
+                               {camp.totalCoinPool > 0 && (
+                                 <div className="inline-flex items-center gap-1.5 bg-gradient-to-br from-amber-400 to-orange-500 text-white px-2.5 py-1 rounded-full text-[9px] font-black shadow-md shadow-orange-500/20 border border-white/30">
+                                   <Coins className="h-3 w-3" />
+                                   {camp.totalCoinPool.toLocaleString("en-IN")} coin pool
+                                 </div>
+                               )}
                           </div>
                           <div className="flex items-center gap-2 md:gap-3 pt-3 md:pt-6 border-t border-slate-200/50 mt-auto relative z-10">
                                <MapPin className="h-3 w-3 md:h-4 md:w-4 text-rose-400" />
@@ -418,6 +424,12 @@ export function VolunteerCamps() {
                        <div className="absolute top-4 right-4 bg-white/80 backdrop-blur-md px-3 py-1 rounded-full text-[9px] font-black text-amber-600 shadow-sm border border-amber-100">
                          {diffDays} DAYS UNTIL START
                        </div>
+                       {camp.totalCoinPool > 0 && (
+                         <div className="absolute top-4 left-4 bg-gradient-to-br from-amber-400 to-orange-500 text-white px-2.5 py-1 rounded-full text-[9px] font-black flex items-center gap-1 shadow-md shadow-orange-500/20 border border-white/40">
+                           <Coins className="h-3 w-3" />
+                           {camp.totalCoinPool >= 1000 ? (camp.totalCoinPool / 1000).toFixed(1).replace(/\.0$/, '') + 'k' : camp.totalCoinPool}
+                         </div>
+                       )}
                        <Tent className="h-8 w-8 md:h-10 md:w-10 text-slate-200 group-hover:text-amber-400 group-hover:scale-110 transition-all duration-500" />
                     </div>
                     <CardContent className="p-6 md:p-8 flex flex-col flex-1">
@@ -425,6 +437,12 @@ export function VolunteerCamps() {
                        <div className="space-y-2 mb-6 md:mb-8 text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest">
                           <p className="flex items-center gap-2"><MapPin className="h-3 w-3 text-amber-500" /> {camp.location}</p>
                           <p className="flex items-center gap-2"><Calendar className="h-3 w-3 text-amber-500" /> {campDate.toLocaleDateString()}</p>
+                          {camp.totalCoinPool > 0 && (
+                            <p className="flex items-center gap-2 text-amber-600">
+                              <Coins className="h-3 w-3" />
+                              {camp.totalCoinPool.toLocaleString("en-IN")} coin prize pool
+                            </p>
+                          )}
                        </div>
                        <button onClick={() => handleRegister(camp.id)} className="mt-auto w-full h-10 md:h-12 bg-slate-950 hover:bg-black text-white font-black text-[10px] tracking-[0.2em] rounded-xl transition-all shadow-lg shadow-slate-900/10 flex items-center justify-center gap-2">
                          REGISTER NOW <ChevronRight className="h-3 w-3" />

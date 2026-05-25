@@ -11,7 +11,8 @@ export interface DonorSession {
   volunteerId?: string;
   partnerId?: string;
   organizationName?: string;
-  role: 'DONOR' | 'VOLUNTEER' | 'PARTNER' | 'ADMIN';
+  role: 'DONOR' | 'VOLUNTEER' | 'PARTNER' | 'ADMIN' | 'SUPER_ADMIN' | 'STATE_ADMIN';
+  adminState?: string | null;
   profileCompleted?: boolean;
 }
 

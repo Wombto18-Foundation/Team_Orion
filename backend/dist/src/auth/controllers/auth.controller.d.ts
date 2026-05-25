@@ -6,14 +6,15 @@ export declare class AuthController {
     adminLogin(email: string, password: string, res: Response): Promise<{
         success: boolean;
         token: string;
-        name: string;
-        role: string;
+        name: any;
+        role: any;
+        state: any;
         redirect: string;
         otpSent: boolean;
     } | {
         error: string;
     }>;
-    login(email: string, password: string, res: Response): Promise<{
+    login(email: string, password: string, res: Response): Promise<Record<string, unknown> | {
         success: boolean;
         token: string;
         name: string | null;
@@ -56,15 +57,13 @@ export declare class AuthController {
         volunteerId?: undefined;
         profileCompleted?: undefined;
     } | {
-        error: string;
-    } | {
-        role: string;
         redirect: string;
         success: boolean;
         token: string;
-        name: string;
+        name: any;
+        role: any;
+        state: any;
         otpSent: boolean;
-        error?: undefined;
     }>;
     register(email: string, password: string, name: string, mobile?: string, isVolunteer?: boolean, isNonDonor?: boolean, referredById?: string): Promise<{
         devOtp?: string | undefined;
@@ -113,7 +112,7 @@ export declare class AuthController {
         eligible: boolean;
         tier: any;
         profileCompleted: boolean;
-        role: "VOLUNTEER" | "DONOR" | "PARTNER";
+        role: "DONOR" | "VOLUNTEER" | "PARTNER";
     } | {
         error: string;
     }>;

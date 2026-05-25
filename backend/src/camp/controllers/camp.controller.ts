@@ -115,10 +115,11 @@ export class CampController {
     @Query('status') status?: string,
     @Query('page') page?: string,
     @Query('limit') limit?: string,
+    @Query('state') state?: string,
   ) {
     const pageNum = page ? Number(page) : undefined;
     const limitNum = limit ? Number(limit) : undefined;
-    return this.campService.listCamps(status, pageNum, limitNum);
+    return this.campService.listCamps(status, pageNum, limitNum, state);
   }
 
   @Get('upcoming')

@@ -56,6 +56,7 @@ export declare class CertificateController {
             showOnLeaderboard: boolean;
             volunteerId: string;
             city: string | null;
+            state: string | null;
             profession: string | null;
             skills: string[];
             availability: string | null;
