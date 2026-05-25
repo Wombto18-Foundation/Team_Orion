@@ -29,6 +29,8 @@ const coin_module_1 = require("./coin/coin.module");
 const referral_module_1 = require("./referral/referral.module");
 const leaderboard_module_1 = require("./leaderboard/leaderboard.module");
 const camp_module_1 = require("./camp/camp.module");
+const camp_request_module_1 = require("./camp-request/camp-request.module");
+const organizer_module_1 = require("./organizer/organizer.module");
 const redis_module_1 = require("./redis/redis.module");
 const storage_module_1 = require("./storage/storage.module");
 const whatsapp_module_1 = require("./whatsapp/whatsapp.module");
@@ -58,6 +60,8 @@ exports.AppModule = AppModule = __decorate([
             referral_module_1.ReferralModule,
             leaderboard_module_1.LeaderboardModule,
             camp_module_1.CampModule,
+            camp_request_module_1.CampRequestModule,
+            organizer_module_1.OrganizerModule,
             redis_module_1.RedisModule,
             storage_module_1.StorageModule,
         ],

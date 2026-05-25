@@ -30,6 +30,63 @@ export declare class MailerService {
         message: string;
     }): Promise<void>;
     private buildCampEmail;
+    sendCampRequestAcknowledgmentEmail(params: {
+        email: string;
+        name: string;
+        campType: string;
+        district: string;
+        state: string;
+    }): Promise<void>;
+    sendCampRequestApprovedEmail(params: {
+        email: string;
+        name: string;
+        campName: string;
+        campDate: string;
+        campEndDate: string;
+        loginUrl: string;
+        password: string;
+        accessExpiresAt: string;
+    }): Promise<void>;
+    sendCampRequestRejectedEmail(params: {
+        email: string;
+        name: string;
+        district: string;
+        state: string;
+        adminNotes: string;
+    }): Promise<void>;
+    sendWithdrawalApprovedEmail(params: {
+        email: string;
+        name: string;
+        amountInr: number;
+        adminNotes?: string;
+    }): Promise<void>;
+    sendWithdrawalRejectedEmail(params: {
+        email: string;
+        name: string;
+        amountInr: number;
+        adminNotes: string;
+    }): Promise<void>;
+    sendWithdrawalPaidEmail(params: {
+        email: string;
+        name: string;
+        amountInr: number;
+        transactionRef: string;
+        adminNotes?: string;
+    }): Promise<void>;
+    private buildWithdrawalEmail;
+    sendStateAdminWelcomeEmail(params: {
+        email: string;
+        name: string;
+        state: string;
+        password: string;
+        loginUrl: string;
+    }): Promise<void>;
+    sendStateAdminPasswordResetEmail(params: {
+        email: string;
+        name: string;
+        newPassword: string;
+        loginUrl: string;
+    }): Promise<void>;
     sendWelcomeDonorEmail(params: {
         email: string;
         name: string;

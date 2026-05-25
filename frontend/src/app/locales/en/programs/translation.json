@@ -10,7 +10,7 @@
       "age": "Pre-birth",
       "status": "Active",
       "description": "Comprehensive healthcare for expectant mothers including regular check-ups, nutrition counseling, birth preparedness, and postpartum support.",
-      "target2026": "Updating soon",
+      "target2026": "Open for Donations",
       "features": ["Regular health check-ups", "Nutrition supplements", "Birth preparedness classes", "Postpartum counseling"],
       "category": "Health"
     },
@@ -19,7 +19,7 @@
       "age": "0-5 years",
       "status": "Active",
       "description": "Immunization drives, developmental screenings, growth monitoring, and early stimulation programs for infants and toddlers.",
-      "target2026": "Updating soon",
+      "target2026": "Open for Donations",
       "features": ["Immunization tracking", "Developmental milestones", "Growth monitoring", "Parent education"],
       "category": "Health"
     },
@@ -28,7 +28,7 @@
       "age": "0-18 years",
       "status": "Active",
       "description": "Mid-day meal programs, nutrition supplements, awareness campaigns, and kitchen gardens to combat malnutrition at every stage.",
-      "target2026": "Updating soon",
+      "target2026": "Open for Donations",
       "features": ["Mid-day meals", "Micronutrient supplements", "Community kitchens", "Nutrition awareness"],
       "category": "Nutrition"
     },
@@ -37,7 +37,7 @@
       "age": "6-18 years",
       "status": "Active",
       "description": "Scholarships, school supplies, after-school tutoring, digital literacy, and career guidance for school-age children.",
-      "target2026": "Updating soon",
+      "target2026": "Open for Donations",
       "features": ["Scholarships", "Digital literacy", "After-school tutoring", "Career guidance"],
       "category": "Education"
     },
@@ -46,7 +46,7 @@
       "age": "14-18 years",
       "status": "Active",
       "description": "Skill development, mentorship, leadership training, and career counseling to prepare teenagers for independent adult life.",
-      "target2026": "Updating soon",
+      "target2026": "Open for Donations",
       "features": ["Skill development", "Mentorship", "Leadership programs", "Internship placements"],
       "category": "Community"
     },
@@ -55,7 +55,7 @@
       "age": "0-18 years",
       "status": "Active",
       "description": "Advocacy, community awareness, helplines, and support systems to protect children from abuse, exploitation, and trafficking.",
-      "target2026": "Updating soon",
+      "target2026": "Open for Donations",
       "features": ["Helpline services", "Community awareness", "Legal support", "Rehabilitation"],
       "category": "Community"
     }

@@ -1,76 +1,19 @@
 import { AdminService } from '../services/admin.service';
-import type { Response } from 'express';
+import type { Response, Request } from 'express';
 export declare class AdminController {
     private readonly adminService;
     constructor(adminService: AdminService);
     getAdminPanel(res: Response): void;
-    getDonors(): Promise<{
-        id: string;
-        name: string;
-        email: string;
-        totalAmount: string;
-        category: string;
-        lastDonation: string;
-    }[]>;
-    getStats(range: string): Promise<{
-        totalDonations: number;
-        totalDonors: number;
+    getDonors(req: Request): Promise<any>;
+    getVolunteers(req: Request, status?: string, search?: string): Promise<{
+        success: boolean;
+        volunteers: any;
+    }>;
+    getStats(range: string, req: Request): Promise<{
+        totalDonations: any;
+        totalDonors: any;
         totalPrograms: number;
-        recentDonations: ({
-            donor: {
-                id: string;
-                donorId: string;
-                createdAt: Date;
-                updatedAt: Date;
-                name: string | null;
-                email: string;
-                mobile: string | null;
-                password: string | null;
-                pan: string | null;
-                address: string | null;
-                tier: string;
-                totalDonated: number;
-                otpHash: string | null;
-                otpExpiry: Date | null;
-                emailOtpHash: string | null;
-                mobileOtpHash: string | null;
-                emailVerified: boolean;
-                mobileVerified: boolean;
-                isEligible: boolean;
-                isVolunteer: boolean;
-                isNonDonor: boolean;
-                showOnLeaderboard: boolean;
-                profileImage: string | null;
-                referredById: string | null;
-                twoFactorEnabled: boolean;
-                resetPasswordToken: string | null;
-                resetPasswordExpires: Date | null;
-            };
-            program: {
-                id: string;
-                createdAt: Date;
-                updatedAt: Date;
-                name: string;
-                description: string;
-                targetAmount: number;
-                raisedAmount: number;
-            };
-        } & {
-            id: string;
-            amount: number;
-            currency: string;
-            status: string;
-            razorpayOrderId: string;
-            razorpayPaymentId: string | null;
-            razorpaySignature: string | null;
-            donorId: string;
-            programId: string;
-            displayName: boolean;
-            receiptNumber: string | null;
-            referralCode: string | null;
-            createdAt: Date;
-            updatedAt: Date;
-        })[];
+        recentDonations: any;
         chartData: any[];
         mappingStats: {
             oneTime: number;
@@ -95,63 +38,78 @@ export declare class AdminController {
         targetAmount: number;
         raisedAmount: number;
     }>;
-    postReport(body: any): Promise<{
+    postReport(_body: any): Promise<{
         success: boolean;
         message: string;
     }>;
-    getDonations(startDate?: string, endDate?: string, programId?: string, donorSearch?: string, status?: string): Promise<({
-        donor: {
-            id: string;
-            donorId: string;
-            createdAt: Date;
-            updatedAt: Date;
-            name: string | null;
-            email: string;
-            mobile: string | null;
-            password: string | null;
-            pan: string | null;
-            address: string | null;
-            tier: string;
-            totalDonated: number;
-            otpHash: string | null;
-            otpExpiry: Date | null;
-            emailOtpHash: string | null;
-            mobileOtpHash: string | null;
-            emailVerified: boolean;
-            mobileVerified: boolean;
-            isEligible: boolean;
-            isVolunteer: boolean;
-            isNonDonor: boolean;
-            showOnLeaderboard: boolean;
-            profileImage: string | null;
-            referredById: string | null;
-            twoFactorEnabled: boolean;
-            resetPasswordToken: string | null;
-            resetPasswordExpires: Date | null;
+    getDonations(req: Request, startDate?: string, endDate?: string, programId?: string, donorSearch?: string, status?: string): Promise<any>;
+    getWithdrawals(req: Request, status?: string, startDate?: string, endDate?: string): Promise<{
+        success: boolean;
+        withdrawals: any;
+    }>;
+    getWithdrawalStats(req: Request): Promise<{
+        success: boolean;
+        stats: {
+            pending: any;
+            approved: any;
+            paid: any;
+            rejected: any;
+            pendingAmountInr: number;
         };
-        program: {
-            id: string;
-            createdAt: Date;
-            updatedAt: Date;
-            name: string;
-            description: string;
-            targetAmount: number;
-            raisedAmount: number;
+    }>;
+    approveWithdrawal(id: string, adminNotes: string | undefined, req: Request): Promise<{
+        success: boolean;
+        message: string;
+    }>;
+    rejectWithdrawal(id: string, adminNotes: string, req: Request): Promise<{
+        success: boolean;
+        message: string;
+    }>;
+    markWithdrawalPaid(id: string, transactionRef: string, adminNotes: string | undefined, req: Request): Promise<{
+        success: boolean;
+        message: string;
+    }>;
+    createSubAdmin(req: Request, body: {
+        name: string;
+        email: string;
+        phone?: string;
+        state: string;
+        password?: string;
+    }): Promise<{
+        success: boolean;
+        admin: {
+            id: any;
+            name: any;
+            email: any;
+            state: any;
+            role: any;
+            isActive: any;
+            createdAt: any;
         };
-    } & {
-        id: string;
-        amount: number;
-        currency: string;
-        status: string;
-        razorpayOrderId: string;
-        razorpayPaymentId: string | null;
-        razorpaySignature: string | null;
-        donorId: string;
-        programId: string;
-        displayName: boolean;
-        receiptNumber: string | null;
-        referralCode: string | null;
-        createdAt: Date;
-        updatedAt: Date;
-    })[]>;
+    }>;
+    listSubAdmins(): Promise<{
+        success: boolean;
+        admins: any;
+    }>;
+    updateSubAdmin(id: string, body: {
+        name?: string;
+        phone?: string;
+        state?: string;
+    }): Promise<{
+        success: boolean;
+        admin: any;
+    }>;
+    toggleSubAdmin(id: string): Promise<{
+        success: boolean;
+        admin: any;
+        message: string;
+    }>;
+    deleteSubAdmin(id: string, confirm: string): Promise<{
+        success: boolean;
+        message: string;
+    }>;
+    resetSubAdminPassword(id: string): Promise<{
+        success: boolean;
+        message: string;
+    }>;
 }

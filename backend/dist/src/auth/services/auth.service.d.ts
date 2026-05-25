@@ -23,11 +23,24 @@ export declare class AuthService {
     private generateOtp;
     private hashOtp;
     private verifyOtpHash;
+    tryAdminLogin(email: string, password: string): Promise<Record<string, unknown> | null>;
+    tryCampOrganizerLogin(email: string, password: string): Promise<Record<string, unknown> | null>;
     adminLogin(email: string, password: string): Promise<{
         success: boolean;
         token: string;
-        name: string;
+        name: any;
+        role: any;
+        state: any;
+        redirect: string;
+        otpSent: boolean;
+    }>;
+    campOrganizerLogin(email: string, password: string): Promise<{
+        success: boolean;
+        token: string;
+        name: any;
         role: string;
+        campId: any;
+        hasChangedPassword: any;
         redirect: string;
         otpSent: boolean;
     }>;
@@ -130,7 +143,7 @@ export declare class AuthService {
         eligible: boolean;
         tier: any;
         profileCompleted: boolean;
-        role: "VOLUNTEER" | "DONOR" | "PARTNER";
+        role: "DONOR" | "VOLUNTEER" | "PARTNER";
     }>;
     forgotPassword(email: string, type: 'DONOR' | 'PARTNER' | 'VOLUNTEER'): Promise<{
         success: boolean;

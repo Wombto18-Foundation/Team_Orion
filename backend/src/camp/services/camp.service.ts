@@ -609,8 +609,10 @@ export class CampService {
   }
 
   //List all camps (upcoming, active, completed)
-  async listCamps(status?: string, page?: number, limit?: number) {
+  async listCamps(status?: string, page?: number, limit?: number, state?: string) {
+    const where: any = state ? { state } : {};
     const camps = await this.prisma.camp.findMany({
+      where,
       orderBy: page && limit ? { createdAt: 'desc' } : { date: 'asc' },
       include: { _count: { select: { participations: true } } },
     });

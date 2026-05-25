@@ -256,6 +256,287 @@ export class MailerService {
     `;
   }
 
+  // CAMP REQUEST EMAIL TEMPLATES
+
+  async sendCampRequestAcknowledgmentEmail(params: {
+    email: string;
+    name: string;
+    campType: string;
+    district: string;
+    state: string;
+  }): Promise<void> {
+    const subject = 'Camp Request Received — WombTo18';
+    const text = `Hi ${params.name}, we received your request for a ${params.campType} camp in ${params.district}, ${params.state}. Our regional coordinator will review it within 3–5 working days.`;
+    const html = `
+      <div style="font-family:Inter,Arial,sans-serif;max-width:540px;margin:0 auto;padding:28px;background:#f8fafc;border-radius:16px;">
+        <div style="text-align:center;margin-bottom:20px;">
+          <span style="font-size:1.2rem;font-weight:900;color:#0f172a;">Womb<span style="color:#10b981;">To18</span></span>
+          <span style="display:block;font-size:0.75rem;color:#64748b;margin-top:2px;text-transform:uppercase;letter-spacing:0.08em;">Foundation · Camp Programme</span>
+        </div>
+        <div style="background:#fff;border-radius:14px;padding:28px;border:1px solid #e2e8f0;box-shadow:0 4px 20px rgba(0,0,0,0.06);">
+          <span style="display:inline-block;padding:4px 12px;border-radius:999px;background:#ecfdf5;color:#166534;font-size:0.72rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:14px;">Request Received</span>
+          <h2 style="margin:0 0 12px;color:#0f172a;font-size:1.2rem;font-weight:800;">We've received your camp request!</h2>
+          <p style="margin:0 0 16px;color:#475569;line-height:1.7;">Hi ${params.name}, thank you for applying to host a <strong>${params.campType}</strong> camp in <strong>${params.district}, ${params.state}</strong>.</p>
+          <div style="background:#f1f5f9;border-radius:10px;padding:14px 18px;margin-bottom:16px;">
+            <p style="margin:0;color:#334155;font-size:0.9rem;line-height:1.6;">Our regional coordinator will review your request within <strong>3–5 working days</strong> and reach out to you via email.</p>
+          </div>
+          <p style="margin:0;color:#64748b;font-size:0.85rem;">If you have any questions, contact us at <a href="mailto:support@wombto18.org" style="color:#10b981;">support@wombto18.org</a></p>
+        </div>
+        <p style="text-align:center;color:#94a3b8;font-size:0.75rem;margin-top:16px;">WombTo18 Foundation · Automated message, do not reply.</p>
+      </div>`;
+    await this.sendEmail(params.email, subject, html, text);
+  }
+
+  async sendCampRequestApprovedEmail(params: {
+    email: string;
+    name: string;
+    campName: string;
+    campDate: string;
+    campEndDate: string;
+    loginUrl: string;
+    password: string;
+    accessExpiresAt: string;
+  }): Promise<void> {
+    const subject = 'Your Camp Request is Approved! — WombTo18';
+    const text = `Congratulations ${params.name}! Your camp request has been approved.\n\nCamp: ${params.campName}\nDates: ${params.campDate} to ${params.campEndDate}\n\nDashboard Login:\nURL: ${params.loginUrl}\nEmail: ${params.email}\nPassword: ${params.password}\n\nAccess valid until: ${params.accessExpiresAt}\nPlease change your password after first login.`;
+    const html = `
+      <div style="font-family:Inter,Arial,sans-serif;max-width:540px;margin:0 auto;padding:28px;background:#f8fafc;border-radius:16px;">
+        <div style="text-align:center;margin-bottom:20px;">
+          <span style="font-size:1.2rem;font-weight:900;color:#0f172a;">Womb<span style="color:#10b981;">To18</span></span>
+          <span style="display:block;font-size:0.75rem;color:#64748b;margin-top:2px;text-transform:uppercase;letter-spacing:0.08em;">Foundation · Camp Programme</span>
+        </div>
+        <div style="background:#fff;border-radius:14px;padding:28px;border:1px solid #e2e8f0;box-shadow:0 4px 20px rgba(0,0,0,0.06);">
+          <span style="display:inline-block;padding:4px 12px;border-radius:999px;background:#dcfce7;color:#166534;font-size:0.72rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:14px;">🎉 Approved!</span>
+          <h2 style="margin:0 0 12px;color:#0f172a;font-size:1.2rem;font-weight:800;">Your camp request is approved!</h2>
+          <p style="margin:0 0 16px;color:#475569;line-height:1.7;">Congratulations, ${params.name}! We're excited to have you organise a camp with us.</p>
+          <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:14px 18px;margin-bottom:16px;">
+            <p style="margin:0 0 6px;font-size:0.78rem;font-weight:700;color:#166534;text-transform:uppercase;letter-spacing:0.06em;">Camp Details</p>
+            <p style="margin:0 0 4px;color:#0f172a;font-weight:700;">${params.campName}</p>
+            <p style="margin:0;color:#475569;font-size:0.9rem;">${params.campDate} → ${params.campEndDate}</p>
+          </div>
+          <div style="background:#f1f5f9;border-radius:10px;padding:16px 18px;margin-bottom:16px;">
+            <p style="margin:0 0 8px;font-size:0.78rem;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:0.06em;">Your Dashboard Login</p>
+            <p style="margin:0 0 4px;color:#0f172a;"><strong>URL:</strong> <a href="${params.loginUrl}" style="color:#10b981;">${params.loginUrl}</a></p>
+            <p style="margin:0 0 4px;color:#0f172a;"><strong>Email:</strong> ${params.email}</p>
+            <p style="margin:0 0 8px;color:#0f172a;"><strong>Password:</strong> <code style="background:#e2e8f0;padding:2px 6px;border-radius:4px;font-family:monospace;">${params.password}</code></p>
+            <p style="margin:0;font-size:0.8rem;color:#ef4444;font-weight:600;">⚠ Change your password after your first login.</p>
+          </div>
+          <p style="margin:0 0 16px;color:#64748b;font-size:0.85rem;">Your dashboard access is valid until <strong>${params.accessExpiresAt}</strong>.</p>
+          <div style="text-align:center;">
+            <a href="${params.loginUrl}" style="display:inline-block;background:#10b981;color:#fff;text-decoration:none;padding:12px 32px;border-radius:999px;font-weight:800;font-size:0.95rem;">Open My Dashboard →</a>
+          </div>
+        </div>
+        <p style="text-align:center;color:#94a3b8;font-size:0.75rem;margin-top:16px;">WombTo18 Foundation · Automated message, do not reply.</p>
+      </div>`;
+    await this.sendEmail(params.email, subject, html, text);
+  }
+
+  async sendCampRequestRejectedEmail(params: {
+    email: string;
+    name: string;
+    district: string;
+    state: string;
+    adminNotes: string;
+  }): Promise<void> {
+    const subject = 'Update on Your Camp Request — WombTo18';
+    const text = `Hi ${params.name}, we reviewed your request for a camp in ${params.district}, ${params.state}. Unfortunately we cannot approve it at this time.\n\nReason: ${params.adminNotes}\n\nYou are welcome to submit a new request at any time.`;
+    const html = `
+      <div style="font-family:Inter,Arial,sans-serif;max-width:540px;margin:0 auto;padding:28px;background:#f8fafc;border-radius:16px;">
+        <div style="text-align:center;margin-bottom:20px;">
+          <span style="font-size:1.2rem;font-weight:900;color:#0f172a;">Womb<span style="color:#10b981;">To18</span></span>
+          <span style="display:block;font-size:0.75rem;color:#64748b;margin-top:2px;text-transform:uppercase;letter-spacing:0.08em;">Foundation · Camp Programme</span>
+        </div>
+        <div style="background:#fff;border-radius:14px;padding:28px;border:1px solid #e2e8f0;box-shadow:0 4px 20px rgba(0,0,0,0.06);">
+          <span style="display:inline-block;padding:4px 12px;border-radius:999px;background:#fee2e2;color:#991b1b;font-size:0.72rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:14px;">Update on your request</span>
+          <h2 style="margin:0 0 12px;color:#0f172a;font-size:1.2rem;font-weight:800;">We could not approve your request</h2>
+          <p style="margin:0 0 16px;color:#475569;line-height:1.7;">Hi ${params.name}, we reviewed your request for a camp in <strong>${params.district}, ${params.state}</strong>. Unfortunately we cannot approve it at this time.</p>
+          <div style="background:#fef9c3;border:1px solid #fde047;border-radius:10px;padding:14px 18px;margin-bottom:16px;">
+            <p style="margin:0 0 4px;font-size:0.78rem;font-weight:700;color:#854d0e;text-transform:uppercase;letter-spacing:0.06em;">Reason</p>
+            <p style="margin:0;color:#78350f;font-size:0.9rem;line-height:1.6;">${params.adminNotes}</p>
+          </div>
+          <p style="margin:0;color:#475569;font-size:0.9rem;line-height:1.7;">You are welcome to submit a new request after addressing the above. Visit our website to apply again.</p>
+        </div>
+        <p style="text-align:center;color:#94a3b8;font-size:0.75rem;margin-top:16px;">WombTo18 Foundation · Automated message, do not reply.</p>
+      </div>`;
+    await this.sendEmail(params.email, subject, html, text);
+  }
+
+  // WITHDRAWAL EMAIL TEMPLATES
+
+  async sendWithdrawalApprovedEmail(params: {
+    email: string;
+    name: string;
+    amountInr: number;
+    adminNotes?: string;
+  }): Promise<void> {
+    const subject = 'Withdrawal Request Approved — WombTo18';
+    const text = `Hi ${params.name}, your withdrawal request of ₹${params.amountInr.toLocaleString('en-IN')} has been approved. It will be processed within 3 working days.${params.adminNotes ? `\n\nNote from admin: ${params.adminNotes}` : ''}`;
+    const html = this.buildWithdrawalEmail({
+      title: 'Withdrawal Approved!',
+      greeting: `Hi ${params.name},`,
+      bodyLine: `Your withdrawal request of <strong>₹${params.amountInr.toLocaleString('en-IN')}</strong> has been <strong style="color:#16a34a;">approved</strong>. It will be processed to your registered bank account within <strong>3 working days</strong>.`,
+      note: params.adminNotes,
+      accent: '#16a34a',
+      icon: '✅',
+      badge: 'APPROVED',
+      badgeBg: '#dcfce7',
+      badgeColor: '#166534',
+    });
+    await this.sendEmail(params.email, subject, html, text);
+  }
+
+  async sendWithdrawalRejectedEmail(params: {
+    email: string;
+    name: string;
+    amountInr: number;
+    adminNotes: string;
+  }): Promise<void> {
+    const subject = 'Withdrawal Request Update — WombTo18';
+    const text = `Hi ${params.name}, your withdrawal request of ₹${params.amountInr.toLocaleString('en-IN')} could not be approved.\n\nReason: ${params.adminNotes}\n\nPlease update your details and try again.`;
+    const html = this.buildWithdrawalEmail({
+      title: 'Withdrawal Not Approved',
+      greeting: `Hi ${params.name},`,
+      bodyLine: `Your withdrawal request of <strong>₹${params.amountInr.toLocaleString('en-IN')}</strong> could not be approved at this time. Please update your details and submit a new request.`,
+      note: params.adminNotes,
+      accent: '#dc2626',
+      icon: '❌',
+      badge: 'REJECTED',
+      badgeBg: '#fee2e2',
+      badgeColor: '#991b1b',
+    });
+    await this.sendEmail(params.email, subject, html, text);
+  }
+
+  async sendWithdrawalPaidEmail(params: {
+    email: string;
+    name: string;
+    amountInr: number;
+    transactionRef: string;
+    adminNotes?: string;
+  }): Promise<void> {
+    const subject = 'Payment Transferred — WombTo18';
+    const text = `Hi ${params.name}, ₹${params.amountInr.toLocaleString('en-IN')} has been transferred to your bank account.\n\nTransaction Reference: ${params.transactionRef}${params.adminNotes ? `\nNote: ${params.adminNotes}` : ''}`;
+    const html = this.buildWithdrawalEmail({
+      title: 'Payment Transferred!',
+      greeting: `Hi ${params.name},`,
+      bodyLine: `<strong>₹${params.amountInr.toLocaleString('en-IN')}</strong> has been transferred to your registered bank account.`,
+      note: params.adminNotes,
+      accent: '#0284c7',
+      icon: '💸',
+      badge: 'PAID',
+      badgeBg: '#e0f2fe',
+      badgeColor: '#075985',
+      extraBlock: `<div style="background:#f0f9ff;border:1px solid #bae6fd;border-radius:10px;padding:14px 18px;margin:16px 0;">
+        <p style="margin:0 0 4px;font-size:0.8rem;font-weight:700;color:#0369a1;text-transform:uppercase;letter-spacing:0.06em;">Transaction Reference</p>
+        <p style="margin:0;font-size:1rem;font-weight:900;color:#0f172a;font-family:monospace;">${params.transactionRef}</p>
+      </div>`,
+    });
+    await this.sendEmail(params.email, subject, html, text);
+  }
+
+  private buildWithdrawalEmail(params: {
+    title: string;
+    greeting: string;
+    bodyLine: string;
+    note?: string;
+    accent: string;
+    icon: string;
+    badge: string;
+    badgeBg: string;
+    badgeColor: string;
+    extraBlock?: string;
+  }): string {
+    return `
+      <div style="font-family:Inter,Arial,sans-serif;max-width:540px;margin:0 auto;padding:28px;background:#f8fafc;border-radius:16px;">
+        <div style="text-align:center;margin-bottom:20px;">
+          <span style="font-size:1.2rem;font-weight:900;color:#0f172a;">Womb<span style="color:#10b981;">To18</span></span>
+          <span style="display:block;font-size:0.75rem;color:#64748b;margin-top:2px;text-transform:uppercase;letter-spacing:0.08em;">Foundation · Volunteer Earnings</span>
+        </div>
+        <div style="background:#fff;border-radius:14px;padding:28px;border:1px solid #e2e8f0;box-shadow:0 4px 20px rgba(0,0,0,0.06);">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+            <span style="font-size:1.8rem;">${params.icon}</span>
+            <div>
+              <span style="display:inline-block;padding:4px 12px;border-radius:999px;background:${params.badgeBg};color:${params.badgeColor};font-size:0.72rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;">${params.badge}</span>
+              <h2 style="margin:4px 0 0;color:#0f172a;font-size:1.2rem;font-weight:800;">${params.title}</h2>
+            </div>
+          </div>
+          <p style="margin:0 0 14px;color:#64748b;font-size:0.88rem;">${params.greeting}</p>
+          <p style="margin:0 0 16px;color:#334155;font-size:0.96rem;line-height:1.7;">${params.bodyLine}</p>
+          ${params.extraBlock || ''}
+          ${params.note ? `<div style="background:#fef9c3;border:1px solid #fde047;border-radius:10px;padding:12px 16px;margin-top:12px;"><p style="margin:0 0 4px;font-size:0.78rem;font-weight:700;color:#854d0e;text-transform:uppercase;">Note from Admin</p><p style="margin:0;color:#78350f;font-size:0.9rem;line-height:1.6;">${params.note}</p></div>` : ''}
+        </div>
+        <p style="text-align:center;color:#94a3b8;font-size:0.75rem;margin-top:16px;">WombTo18 Foundation · Automated message, do not reply.</p>
+      </div>`;
+  }
+
+  // ADMIN EMAIL TEMPLATES
+
+  async sendStateAdminWelcomeEmail(params: {
+    email: string;
+    name: string;
+    state: string;
+    password: string;
+    loginUrl: string;
+  }): Promise<void> {
+    const subject = 'Your WombTo18 State Admin Account';
+    const text = `Hi ${params.name}, you have been added as State Admin for ${params.state}.\nEmail: ${params.email}\nPassword: ${params.password}\nLogin at: ${params.loginUrl}`;
+    const html = `
+      <div style="font-family:Inter,Arial,sans-serif;max-width:540px;margin:0 auto;padding:28px;background:#f8fafc;border-radius:16px;">
+        <div style="text-align:center;margin-bottom:20px;">
+          <span style="font-size:1.2rem;font-weight:900;color:#0f172a;">Womb<span style="color:#10b981;">To18</span></span>
+          <span style="display:block;font-size:0.75rem;color:#64748b;margin-top:2px;text-transform:uppercase;letter-spacing:0.08em;">Foundation · Admin Portal</span>
+        </div>
+        <div style="background:#fff;border-radius:14px;padding:28px;border:1px solid #e2e8f0;box-shadow:0 4px 20px rgba(0,0,0,0.06);">
+          <p style="margin:0 0 6px;color:#64748b;font-size:0.85rem;">Hello ${params.name},</p>
+          <h2 style="margin:0 0 16px;color:#0f172a;font-size:1.3rem;font-weight:800;">You are now a State Admin</h2>
+          <p style="color:#475569;margin:0 0 20px;line-height:1.7;">You have been provisioned as the <strong>${params.state}</strong> State Admin on the WombTo18 platform.</p>
+          <div style="background:#f1f5f9;border-radius:10px;padding:16px 20px;margin-bottom:20px;">
+            <p style="margin:0 0 8px;font-size:0.8rem;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:0.06em;">Your Login Credentials</p>
+            <p style="margin:0 0 4px;color:#0f172a;"><strong>Email:</strong> ${params.email}</p>
+            <p style="margin:0 0 4px;color:#0f172a;"><strong>Password:</strong> <code style="background:#e2e8f0;padding:2px 6px;border-radius:4px;font-family:monospace;">${params.password}</code></p>
+            <p style="margin:8px 0 0;font-size:0.8rem;color:#ef4444;">Please change your password immediately after logging in.</p>
+          </div>
+          <div style="text-align:center;">
+            <a href="${params.loginUrl}" style="display:inline-block;background:#10b981;color:#fff;text-decoration:none;padding:12px 32px;border-radius:999px;font-weight:800;font-size:0.95rem;">Login to Dashboard →</a>
+          </div>
+        </div>
+        <p style="text-align:center;color:#94a3b8;font-size:0.75rem;margin-top:16px;">WombTo18 Foundation · Automated message, do not reply.</p>
+      </div>`;
+    await this.sendEmail(params.email, subject, html, text);
+  }
+
+  async sendStateAdminPasswordResetEmail(params: {
+    email: string;
+    name: string;
+    newPassword: string;
+    loginUrl: string;
+  }): Promise<void> {
+    const subject = 'Your WombTo18 Admin Password Has Been Reset';
+    const text = `Hi ${params.name}, your admin account password has been reset.\nNew Password: ${params.newPassword}\nLogin at: ${params.loginUrl}`;
+    const html = `
+      <div style="font-family:Inter,Arial,sans-serif;max-width:540px;margin:0 auto;padding:28px;background:#f8fafc;border-radius:16px;">
+        <div style="text-align:center;margin-bottom:20px;">
+          <span style="font-size:1.2rem;font-weight:900;color:#0f172a;">Womb<span style="color:#10b981;">To18</span></span>
+          <span style="display:block;font-size:0.75rem;color:#64748b;margin-top:2px;text-transform:uppercase;letter-spacing:0.08em;">Foundation · Admin Portal</span>
+        </div>
+        <div style="background:#fff;border-radius:14px;padding:28px;border:1px solid #e2e8f0;box-shadow:0 4px 20px rgba(0,0,0,0.06);">
+          <p style="margin:0 0 6px;color:#64748b;font-size:0.85rem;">Hello ${params.name},</p>
+          <h2 style="margin:0 0 16px;color:#0f172a;font-size:1.3rem;font-weight:800;">Your Password Has Been Reset</h2>
+          <p style="color:#475569;margin:0 0 20px;line-height:1.7;">A Super Admin has reset your login password. Use the credentials below to log back in.</p>
+          <div style="background:#fef9c3;border:1px solid #fde047;border-radius:10px;padding:16px 20px;margin-bottom:20px;">
+            <p style="margin:0 0 8px;font-size:0.8rem;font-weight:700;color:#854d0e;text-transform:uppercase;letter-spacing:0.06em;">New Credentials</p>
+            <p style="margin:0 0 4px;color:#0f172a;"><strong>Email:</strong> ${params.email}</p>
+            <p style="margin:0;color:#0f172a;"><strong>New Password:</strong> <code style="background:#e2e8f0;padding:2px 6px;border-radius:4px;font-family:monospace;">${params.newPassword}</code></p>
+          </div>
+          <div style="text-align:center;">
+            <a href="${params.loginUrl}" style="display:inline-block;background:#10b981;color:#fff;text-decoration:none;padding:12px 32px;border-radius:999px;font-weight:800;font-size:0.95rem;">Login Now →</a>
+          </div>
+        </div>
+        <p style="text-align:center;color:#94a3b8;font-size:0.75rem;margin-top:16px;">WombTo18 Foundation · Automated message, do not reply.</p>
+      </div>`;
+    await this.sendEmail(params.email, subject, html, text);
+  }
+
   // WELCOME EMAIL TEMPLATES
 
   async sendWelcomeDonorEmail(params: { email: string; name: string; donorId: string }): Promise<void> {

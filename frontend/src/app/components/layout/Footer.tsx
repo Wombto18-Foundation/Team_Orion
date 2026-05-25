@@ -46,6 +46,7 @@ export function Footer() {
               { href: "/services", label: "Our Programs" },
               { href: "/impact", label: "Our Impact" },
               { href: "/donate", label: "Donate" },
+              { href: "/request-camp", label: "Host a Camp" },
               { href: "/blog", label: "Blog" },
               { href: "/verify", label: "Verify Certificate" },
             ].map((link) => (
@@ -100,6 +101,7 @@ export function Footer() {
             <Link to="/careers" className="text-sm text-slate-500 hover:text-primary transition-colors font-medium">Careers</Link>
             <Link to="/terms-of-use" className="text-sm text-slate-500 hover:text-primary transition-colors font-medium">Terms of Use</Link>
             <Link to="/privacy-policy" className="text-sm text-slate-500 hover:text-primary transition-colors font-medium">Privacy Policy</Link>
+            <Link to="/organizer/login" className="text-sm text-slate-400 hover:text-slate-500 transition-colors font-medium">Camp Organiser</Link>
           </div>
         </div>
       </div>

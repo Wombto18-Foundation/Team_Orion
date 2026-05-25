@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import {
   Pagination,
   PaginationContent,
@@ -12,8 +12,10 @@ import { Tent, Plus, MapPin, Calendar, Users, Loader2, Sparkles, ArrowRight } fr
 import { useNavigate } from "react-router";
 import { client } from "../../lib/api/client";
 import { motion, AnimatePresence } from "motion/react";
+import { useStateParam } from "../../context/AdminStateContext";
 
 export function AdminCamps() {
+  const stateParam = useStateParam();
   const [camps, setCamps] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
@@ -22,9 +24,10 @@ export function AdminCamps() {
   const navigate = useNavigate();
   const pageSize = 10;
 
-  useEffect(() => {
+  const fetchCamps = useCallback(() => {
     setLoading(true);
-    client.get<any>(`/camps/list?page=${page}&limit=${pageSize}`)
+    const stateQuery = stateParam ? `&${stateParam.slice(1)}` : "";
+    client.get<any>(`/camps/list?page=${page}&limit=${pageSize}${stateQuery}`)
       .then(res => {
         const items = Array.isArray(res) ? res : res?.items || [];
         setCamps(items);
@@ -33,7 +36,9 @@ export function AdminCamps() {
       })
       .catch(console.error)
       .finally(() => setLoading(false));
-  }, [page]);
+  }, [page, stateParam]);
+
+  useEffect(() => { fetchCamps(); }, [fetchCamps]);
 
   const containerVariants = {
     hidden: { opacity: 0 },

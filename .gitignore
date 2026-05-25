@@ -35,3 +35,4 @@ Thumbs.db
 # Build system files
 *.tsbuildinfo
 /uploads
+/IMPLEMENTATION_PLAN.md

@@ -356,8 +356,7 @@ function UpcomingCampsSection() {
     client.get<any[]>('/camps/upcoming')
       .then(data => {
         const sorted = (data || [])
-          .filter((c: any) => c.totalCoinPool > 0)
-          .sort((a: any, b: any) => (b.totalCoinPool || 0) - (a.totalCoinPool || 0))
+          .sort((a: any, b: any) => new Date(a.date).getTime() - new Date(b.date).getTime())
           .slice(0, 3);
         setCamps(sorted);
       })
@@ -426,10 +425,12 @@ function UpcomingCampsSection() {
                       <img src={purpose.img} alt={camp.purpose} className="w-[110%] h-[110%] object-contain relative z-10 -mt-1 drop-shadow-md" />
 
                       {/* Coins overlapping the image container */}
-                      <div className="absolute -bottom-2 -right-3 bg-gradient-to-br from-amber-400 to-orange-500 text-white px-2.5 py-0.5 rounded-full shadow-lg shadow-orange-500/30 text-[10px] font-black flex items-center gap-1.5 border-[2px] border-white z-20">
-                        <Coins size={12} strokeWidth={2.5} />
-                        {camp.totalCoinPool >= 1000 ? (camp.totalCoinPool / 1000).toFixed(1).replace(/\.0$/, '') + 'k' : camp.totalCoinPool}
-                      </div>
+                      {camp.totalCoinPool > 0 && (
+                        <div className="absolute -bottom-2 -right-3 bg-gradient-to-br from-amber-400 to-orange-500 text-white px-2.5 py-0.5 rounded-full shadow-lg shadow-orange-500/30 text-[10px] font-black flex items-center gap-1.5 border-[2px] border-white z-20">
+                          <Coins size={12} strokeWidth={2.5} />
+                          {camp.totalCoinPool >= 1000 ? (camp.totalCoinPool / 1000).toFixed(1).replace(/\.0$/, '') + 'k' : camp.totalCoinPool}
+                        </div>
+                      )}
                     </div>
 
                     {/* Header Info */}

@@ -4,6 +4,7 @@ import { DashboardLayout } from "./components/layout/DashboardLayout";
 import { AdminLayout } from "./components/layout/AdminLayout";
 import { PartnerLayout } from "./components/layout/PartnerLayout";
 import { VolunteerDashboardLayout } from "./components/layout/VolunteerDashboardLayout";
+import { OrganizerLayout } from "./components/layout/OrganizerLayout";
 
 // Public Pages
 import { HomePage } from "./pages/HomePage";
@@ -22,6 +23,7 @@ import { TermsOfUsePage } from "./pages/TermsOfUsePage";
 import { DonatePage } from "./pages/DonatePage";
 import { DonationSuccessPage } from "./pages/DonationSuccessPage";
 import WallOfFamePage from "./pages/donate/WallOfFamePage";
+import { RequestCampPage } from "./pages/RequestCampPage";
 
 // Other
 import { DashboardPreviewPage } from "./pages/DashboardPreviewPage";
@@ -72,9 +74,18 @@ import { PartnerStats } from "./pages/partner/PartnerStats";
 import { PartnerSignup } from "./pages/partner/PartnerSignup";
 import { PartnerProfile } from "./pages/partner/PartnerProfile";
 
+// Organizer
+import { OrganizerLogin } from "./pages/organizer/OrganizerLogin";
+import { OrganizerSetPassword } from "./pages/organizer/OrganizerSetPassword";
+import { OrganizerExpired } from "./pages/organizer/OrganizerExpired";
+import { OrganizerDashboard } from "./pages/organizer/OrganizerDashboard";
+import { OrganizerVolunteers } from "./pages/organizer/OrganizerVolunteers";
+import { OrganizerAttendance } from "./pages/organizer/OrganizerAttendance";
+
 // Admin Dashboard
 import { AdminDashboard } from "./pages/admin/AdminDashboard";
 import { AdminDonors } from "./pages/admin/AdminDonors";
+import { AdminVolunteers } from "./pages/admin/AdminVolunteers";
 import { AdminPrograms } from "./pages/admin/AdminPrograms";
 import { AdminReports } from "./pages/admin/AdminReports";
 import { AdminBlog } from "./pages/admin/AdminBlog";
@@ -83,6 +94,9 @@ import { AdminCamps } from "./pages/admin/AdminCamps";
 import { AdminCampCreate } from "./pages/admin/AdminCampCreate";
 import { AdminCampDetail } from "./pages/admin/AdminCampDetail";
 import { AdminLedger } from "./pages/admin/AdminLedger";
+import { AdminSubAdmins } from "./pages/admin/AdminSubAdmins";
+import { AdminWithdrawals } from "./pages/admin/AdminWithdrawals";
+import { AdminCampRequests } from "./pages/admin/AdminCampRequests";
 
 export const router = createBrowserRouter([
   {
@@ -105,6 +119,7 @@ export const router = createBrowserRouter([
       { path: "donate", Component: DonatePage },
       { path: "donation-success", Component: DonationSuccessPage },
       { path: "wall-of-fame", Component: WallOfFamePage },
+      { path: "request-camp", Component: RequestCampPage },
       { path: "volunteer-onboarding", Component: VolunteerOnboardingPage },
       { path: "volunteer-policy", Component: VolunteerBenefitsPage },
       { path: "volunteer-success", Component: VolunteerSuccessPage },
@@ -179,6 +194,23 @@ export const router = createBrowserRouter([
       { index: true, Component: PartnerDashboard },
     ],
   },
+  // Organizer standalone pages (no layout guard)
+  { path: "/organizer/login", Component: OrganizerLogin },
+  { path: "/organizer/set-password", Component: OrganizerSetPassword },
+  { path: "/organizer/expired", Component: OrganizerExpired },
+
+  // Organizer protected pages (layout handles auth)
+  {
+    path: "/organizer",
+    Component: OrganizerLayout,
+    children: [
+      { index: true, Component: OrganizerDashboard },
+      { path: "dashboard", Component: OrganizerDashboard },
+      { path: "volunteers", Component: OrganizerVolunteers },
+      { path: "attendance", Component: OrganizerAttendance },
+    ],
+  },
+
   {
     path: "/admin",
     Component: AdminLayout,
@@ -186,6 +218,10 @@ export const router = createBrowserRouter([
       { index: true, Component: AdminDashboard },
       { path: "dashboard", Component: AdminDashboard },
       { path: "donors", Component: AdminDonors },
+      { path: "volunteers", Component: AdminVolunteers },
+      { path: "sub-admins", Component: AdminSubAdmins },
+      { path: "withdrawals", Component: AdminWithdrawals },
+      { path: "camp-requests", Component: AdminCampRequests },
       { path: "programs", Component: AdminPrograms },
       { path: "reports", Component: AdminReports },
       { path: "blog", Component: AdminBlog },
